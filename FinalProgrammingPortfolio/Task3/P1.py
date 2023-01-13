@@ -1,45 +1,41 @@
-import random,sys,string
-aplh=[aplh for aplh in (string.ascii_lowercase+string.ascii_uppercase)]
+import random
+import sys
+
+def generate_email(first_name, last_name, id_number):
+    """
+    Generates an email address using the first name, last name, and id number of a person
+    :param first_name: first name of the person
+    :param last_name: last name of the person
+    :param id_number: id number of the person
+    :return: email address
+    """
+    # convert the first name to initials
+    initial = '.'.join([name[0] for name in first_name.split()])
+    # remove non-alphanumeric characters from last name and convert to lowercase
+    last_name = ''.join(char for char in last_name if char.isalnum()).lower()
+    # generate the email address
+    email = f"{id_number}: {initial}.{last_name}{random.randint(1000, 9999)}@poppleton.ac.uk"
+    return email
+
 try:
-    f=(open(sys.argv[1],"r"))
-    newfile=(open(r"C:\Users\Shreyash Parajuli\Documents\LEV 4 SEM 1\FOCP\FinalProgrammingPortfolio\Task3\Emails.txt","w"))
-    email="@poppleton.ac.uk"
-    def name(s):
-        l = s.split()
-        new = ""
-        for i in range(len(l)):
-            s = l[i]      
-            new += (s[0]+'.')
-        # new += l[-1].title()
-        return new
-    def nospe(special_string):    
-        sample_list=[]
-        for i in special_string:
-            if i.isalnum():
-                sample_list.append(i)
-        normal_string="".join(sample_list)
-        return normal_string
-    for i in f.readlines():
-        person=i[:-1]
-        listp=person.split(",")
-        inito=listp[1].lower()
-        ini=name(inito)
-        ids=listp[0].split()
-        id=ids[0]
-        lastname="".join(ids[1:])
-        # inilist=[i for a,i in enumerate(lastname)]
-        newfile.write(f"{id} {ini}{nospe(lastname.lower())}{(random.randint(1000,9999))}{email}\n")
-        # lastname=[]
-        # for val in lastlist:
-        #     if val in aplh:
-        #         lastname.append(val)
-        # print("".join(map(str,lastname))
-    # A string with special characters
-    # special_string="spe@#$ci87al*&"
-    # print("String before conversion: ",special_string)
-    # Declaring a list
-except FileNotFoundError as k:
-    print("""Error: Cannot open "missing.txt". Sorry about that.""")
+    # get the file name from the command-line argument
+    file_name = sys.argv[1]
+    # open the file and the new file to write the emails
+    with open(file_name, "r") as f, open("Emails.txt", "w") as new_file:
+        for line in f:
+            # split the line into the person's information
+            person = line.strip().split(',')
+            # get the id number, first name, and last name
+            id_number = person[0].split()[0]
+            first_name = person[1].lower()
+            last_name = ' '.join(person[0].split()[1:]).lower()
+            # generate the email address
+            email = generate_email(first_name, last_name, id_number)
+            # write the email address to the new file
+            new_file.write(f"{email}\n")
+except FileNotFoundError:
+    print("Error: Cannot open the specified file. Please check the file name and try again.")
 except IndexError:
     print("Error: Missing command-line argument.")
-# f=(open(r"C:\Users\Shreyash Parajuli\Documents\LEV 4 SEM 1\FOCP\FinalProgrammingPortfolio\Task3\names.txt","r"))
+except:
+    print("Error: An unknown error occurred.")

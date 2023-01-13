@@ -1,36 +1,38 @@
-def convert(seconds):
-    seconds = seconds % (24 * 3600)
-    seconds %= 3600
-    minutes = seconds // 60
-    seconds %= 60
-    minst,secst="minutes","seconds"
-    if minutes==1 or minutes==0:
-        minst="minute"
-    if seconds==1 or seconds==0:
-        secst="second"
-    return "%02d %s, %02d %s" % (minutes, minst, seconds, secst)
-retur= lambda dat : (len(dat),sum(dat.values())//len(dat),min(dat.values()),max(dat.values()),min(dat, key=dat.get))
-count=0
-data={}
-# val=""
+def convert_time(seconds):
+    """
+    This function converts seconds to minutes and seconds format.
+    """
+    minutes, seconds = divmod(seconds, 60)
+    minst, secst = "minutes", "seconds"
+    if minutes == 1:
+        minst = "minute"
+    if seconds == 1:
+        secst = "second"
+    return "{:02d} {} {:02d} {}".format(minutes, minst, seconds, secst)
+
+data = {}
 print("Park Run Timer\n~~~~~~~~~~~~~~\n\nLet's go!\n")
 while True:
+    val = input("> ")
+    if val.upper() == "END":
+        break
     try:
-        val=(input("> "))
-        valt=val.split("::")
-        if val=="END":
-            break
-        int(valt[0])
-        if valt[1]=="" or valt[0]=="":
+        runner_num, time = val.split("::")
+        time = int(time)
+        if runner_num in data or time < 0:
             print("Error in data stream. Ignoring. Carry on.")
         else:
-            count+=1
-            data[valt[0]]=int(valt[1])
+            data[runner_num] = time
     except:
-        print("Error in data stream. Ignorning. Carry on.")
-try:
-    t,a,m,ma,win=retur(data)
-    a,m,ma=convert(a),convert(m),convert(ma)
-    print("\nTotal Runners:  %d\nAverage Time:  %s\nFastest Time:  %s\nSlowest Time:  %s\n\nBest Time Here:  Runner #%s"%(t,a,m,ma,win))
-except ZeroDivisionError:
+        print("Error in data stream. Ignoring. Carry on.")
+
+if data:
+    times = list(data.values())
+    total_runners = len(times)
+    average_time = convert_time(int(sum(times) / total_runners))
+    fastest_time = convert_time(min(times))
+    slowest_time = convert_time(max(times))
+    best_time_runner = min(data, key=data.get)
+    print("\nTotal Runners:  {}\nAverage Time:  {}\nFastest Time:  {}\nSlowest Time:  {}\n\nBest Time Here:  Runner #{}".format(total_runners, average_time,fastest_time, slowest_time, best_time_runner))
+else:
     print("No data found. Nothing to do. What a pity.")
